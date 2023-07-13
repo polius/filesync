@@ -22,10 +22,10 @@ class User {
     return this._files
   }
 
-  async init() {
+  async init(peer_id = null) {
     await new Promise((resolve) => {
       // Create a new Peer instance
-      this._peer = new Peer();
+      this._peer = new Peer(peer_id);
 
       // Emitted when a connection to the PeerServer is established.
       this._peer.on('open', (id) => this._handleOpen(id, resolve));
@@ -292,11 +292,14 @@ class User {
 
   // Emitted when there is an unexpected error in the data connection.
   _handleError(err) {
-    error.innerHTML = "This room does no longer exist."
-    error.style.display = 'block'
-    home_button.disabled = false
-    home_button_loading.style.display = 'none'
     console.error('Connection error: ' + err)
+    if (home.style.display == 'block') {
+      error.innerHTML = "This room does no longer exist."
+      error.style.display = 'block'
+      home_button.disabled = false
+      home_button_loading.style.display = 'none'
+    }
+    else this.init(this._id)
   }
 
   async _onFileReceive(conn, file) {
