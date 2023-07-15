@@ -162,7 +162,7 @@ class User {
         transfer_status_wait.style.display = 'none'
         transfer_status_ok.style.display = 'block'
         transfer_select_file.classList.remove('disabled')
-        
+
         // Show UI new peer user
         let li = document.createElement('li')
         li.setAttribute('id', `user-${data['webrtc-auth']['nickname']}`)
@@ -226,7 +226,7 @@ class User {
 
           // Add Peer Backend
           this._remotePeers[p.id] = {"nickname": p.nickname}
-          
+
           // Connect New Peer if it's not the self peer and it's not the host
           if (p.id != this._id && p.id != room_id) {
             await this.connect(p.id)
@@ -294,12 +294,12 @@ class User {
   _handleError(err) {
     console.error('Connection error: ' + err)
     if (home.style.display == 'block') {
-      error.innerHTML = "This room does no longer exist."
+      error.innerHTML = !peerjs.util.supports.data ? 'FileSync can not work with this browser.' : "This room does no longer exist."
       error.style.display = 'block'
       home_button.disabled = false
       home_button_loading.style.display = 'none'
     }
-    else this.init(this._id)
+    else setTimeout(() => this.init(this._id), 1000);
   }
 
   async _onFileReceive(conn, file) {
@@ -339,7 +339,8 @@ class User {
       }
     }
 
-    const overall_progress = Math.floor(raw_progress.progress / raw_progress.peers)
+    // console.log(raw_progress)
+    const overall_progress = raw_progress.peers == 0 ? 0 : Math.floor(raw_progress.progress / raw_progress.peers)
 
     // Update UI: Show the overall progress
     document.getElementById(`file-${data.file}-progress`).innerHTML = `${overall_progress}% |`
@@ -349,7 +350,7 @@ class User {
       document.getElementById(`file-${data.file}-reject`).style.display = 'none'
       document.getElementById(`file-${data.file}-icon-loading`).style.display = 'none'
       document.getElementById(`file-${data.file}-icon-success`).style.display = 'block'
-      
+
       // Remove file reference from memory
       delete this._files[data.file]
     }
@@ -410,10 +411,10 @@ class User {
             <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/>
           </svg>
           ${file.name}</div>
-          <div style="color: #636979; font-size: .85rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left"><span id="file-${file.id}-progress" style="margin-right:3px"></span>${parseBytes(file.size)} | Sent by ${file.owner_id == this._id ? `${file.owner_name} (You)` : file.owner_name }</div>
-          <div id="file-${file.id}-error" style="color: #dc3545; font-size: .85rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; margin-top:5px"></div>  
+          <div style="color: #636979; font-size: .9rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left"><span id="file-${file.id}-progress" style="margin-right:3px"></span>${parseBytes(file.size)} | Sent by ${file.owner_id == this._id ? `${file.owner_name} (You)` : file.owner_name }</div>
+          <div id="file-${file.id}-error" style="color: #dc3545; font-size: .9rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; margin-top:5px"></div>
         </div>
-  
+
         <div id="file-${file.id}-reject" onclick="rejectFile('${file.id}')" class="col-auto text-end" title="Reject file" style="cursor: pointer; display: ${file.owner_id == this._id ? 'block-inline' : 'none'}">
           <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="#dc3545" class="bi bi-x-circle" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
