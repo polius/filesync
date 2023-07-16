@@ -26,6 +26,6 @@ FileSync uses [PeerJS](https://github.com/peers/peerjs) (a WebRTC wrapper) to tr
 
 Do note that a [PeerJS server](https://github.com/peers/peerjs-server) is used to assist in the initial connection setup, ensuring all users can establish peer-to-peer connections effectively. Once the connections are established, the server steps back, allowing the direct transfer of files between the sender and the receiver. At no point during this process does the server have access to the file contents. It solely facilitates the connection between users without compromising the privacy or security of the files being shared.
 
-![File Transfer - https://xkcd.com/949](assets/comic.png)
+![File Transfer - https://xkcd.com/949](src/assets/comic.png)
 
 Released under the MIT License.
