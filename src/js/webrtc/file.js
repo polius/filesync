@@ -182,7 +182,7 @@ class File {
       // Download merged file
       const downloadLink = document.createElement('a')
       downloadLink.href = URL.createObjectURL(blob)
-      downloadLink.download = this._name
+      downloadLink.setAttribute('download', this._name)
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
@@ -220,7 +220,7 @@ class File {
     // Step 6: Encrypt the chunk with AES-GCM algorithm
     const encryptedData = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, derivedKey, arrayBuffer);
 
-    // Step 7: Return the encrypted data, IV, and key as ArrayBuffer
+    // Step 7: Return the encrypted data as ArrayBuffer
     return encryptedData;
   }
 
@@ -246,7 +246,7 @@ class File {
     // Step 6: Convert the decrypted ArrayBuffer to a Blob
     const decryptedBlob = new Blob([decryptedData]);
 
-    // Step 7: Return the decrypted Blob
+    // Step 7: Return the decrypted data as Blob
     return decryptedBlob;
   }
 }

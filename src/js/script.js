@@ -133,8 +133,7 @@ function shareTelegram() {
 
 // Use Cryptex
 function openCryptex() {
-  navigator.clipboard.writeText(transfer_url.href)
-  window.open('https://cryptex.ninja', '_blank')
+  window.open(`https://cryptex.ninja?m=${encodeURIComponent(transfer_url.href)}`, '_blank')
 }
 
 // Create / Join room
@@ -151,7 +150,7 @@ async function homeButtonClick() {
   // Create current user
   user = new User(nickname.value)
 
-  // Init peer connection --> 'webrtc-filesync-'
+  // Init peer connection
   await user.init()
 
   // Host peer

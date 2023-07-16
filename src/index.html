@@ -72,10 +72,10 @@
           </div>
 
           <p style="text-align: left; margin-bottom:8px; font-weight:500">Nickname</p>
-          <input id="nickname" class="form-control" autocomplete="off" onkeypress="if (event.keyCode === 13) { homeButtonClick() }">
+          <input id="nickname" class="form-control" autocomplete="off" onkeypress="if (event.key === 'Enter' || event.key === 'NumpadEnter') { homeButtonClick() }">
           <p style="text-align: left; margin-top:15px; margin-bottom:8px; font-weight:500">Password (optional)</p>
           <div class="input-group">
-            <input class="form-control" id="password" type="password" autocomplete="off" onkeypress="if (event.keyCode === 13) { homeButtonClick() }" style="border-top-right-radius:0!important; border-bottom-right-radius:0!important">
+            <input class="form-control" id="password" type="password" autocomplete="off" onkeypress="if (event.key === 'Enter' || event.key === 'NumpadEnter') { homeButtonClick() }" style="border-top-right-radius:0!important; border-bottom-right-radius:0!important">
             <button onclick="togglePasswordVisibility()" class="btn" type="button" style="background-color: #212529; color:#fff; border-color: rgb(86, 92, 110); margin-left:-1px; border-top-left-radius: 0; border-bottom-left-radius: 0">
               <svg id="password-button-hide" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16" style="margin-bottom:0px!important; display:block;">
                 <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z"/>
