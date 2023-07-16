@@ -13,9 +13,10 @@ const transfer = document.getElementById('transfer')
 const theme_text = document.getElementById('theme-text')
 const about_text = document.getElementById('about-text')
 
+// About UI
+const comic_img = document.getElementById('comic-img')
+
 // Home UI
-const home_room = document.getElementById('home-room')
-const home_room_id = document.getElementById('home-room-id')
 const nickname = document.getElementById('nickname')
 const password = document.getElementById('password')
 const error = document.getElementById('error')
@@ -46,21 +47,17 @@ var user;
 
 // Get theme mode
 const mode = window.localStorage.getItem('mode')
-if (mode == 'dark') theme_text.innerHTML = 'Dark'
+if (mode == 'dark') {
+  theme_text.innerHTML = 'Dark'
+  comic_img.src = "assets/comic-dark.png"
+}
 
-// Execute on page load
-window.addEventListener("load", () => {
-  // Clean inputs
-  nickname.value = password.value = ''
-  nickname.focus()
+// Change button name for invited peers
+if (room_id.length > 0) home_button_text.innerHTML = 'Join room'
 
-  // Show room id for invited peers
-  if (room_id.length > 0) {
-    home_room.style.display = 'block'
-    home_room_id.innerHTML = room_id
-    home_button_text.innerHTML = 'Join room'
-  }
-})
+// Clean inputs
+nickname.value = password.value = ''
+nickname.focus()
 
 // Theme
 function themeClick() {
@@ -70,6 +67,7 @@ function themeClick() {
     document.documentElement.classList.add("light")
     document.documentElement.setAttribute('data-bs-theme', 'light')
     window.localStorage.setItem('mode', 'light')
+    comic_img.src = "assets/comic.png"
   }
   else if (theme_text.innerHTML == 'Light') {
     theme_text.innerHTML = 'Dark'
@@ -77,6 +75,7 @@ function themeClick() {
     document.documentElement.classList.add("dark")
     document.documentElement.setAttribute('data-bs-theme', 'dark')
     window.localStorage.setItem('mode', 'dark')
+    comic_img.src = "assets/comic-dark.png"
   }
 }
 

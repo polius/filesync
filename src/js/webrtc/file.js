@@ -198,7 +198,7 @@ class File {
     console.error("An error occurred.", err)
   }
 
-  // Function to encrypt a chunk of data with AES-CBC
+  // Function to encrypt a chunk of data with AES-GCM
   async _encrypt(chunk, key) {
     // Step 1: Encode the key
     const encoder = new TextEncoder();
@@ -224,7 +224,7 @@ class File {
     return encryptedData;
   }
 
-  // Function to decrypt a chunk of encrypted data with AES-CBC
+  // Function to decrypt a chunk of encrypted data with AES-GCM
   async _decrypt(chunk, key) {
     // Step 1: Encode the key
     const encoder = new TextEncoder();

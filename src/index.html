@@ -42,13 +42,14 @@
           <p style="font-size: 1rem; margin-top:10px">Designed to work on any device, anywhere!</p>
           <hr>
           <p style="text-align: justify; text-justify: inter-word;">FileSync.app is a file sharing web app that allows users to transfer files between multiple devices.</p>
-          <p style="text-align: justify; text-justify: inter-word;">This solution simplifies file sharing by utilizing the internet's capabilities. No account creation or signups are required. It enables both one-to-one and many-to-many file transfers, works across various networks and devices, and requires no app installation.</p>
-          <p style="text-align: justify; text-justify: inter-word;">FileSync uses <a href="https://github.com/peers/peerjs" target="_blank" style="text-decoration: none;">PeerJS</a> (a WebRTC wrapper) to transfer files between multiple devices. Files shared are peer-to-peer, which means there is direct file transfer between the sender and receiver without any intermediate server. Your files remain private and secure throughout the entire transfer process.</p>
-          <p style="text-align: justify; text-justify: inter-word;">Do note that a <a href="https://github.com/peers/peerjs-server" target="_blank" style="text-decoration: none;">PeerJS server</a> is used to assist in the initial connection setup, ensuring all users can establish peer-to-peer connections effectively. Once the connections are established, the server steps back, allowing the direct transfer of files between the sender and the receiver. At no point during this process does the server have access to the file contents. It solely facilitates the connection between users without compromising the privacy or security of the files being shared.</p>
+          <p style="text-align: justify; text-justify: inter-word;">This solution simplifies file sharing by leveraging WebRTC, an open framework for the web that enables Real-Time Communications capabilities in the browser.</p>
+          <p style="text-align: justify; text-justify: inter-word;">No account creation or signups are required. It enables both one-to-one and many-to-many file transfers, works across various networks and devices, and requires no app installation.</p>
+          <p style="text-align: justify; text-justify: inter-word;">This app ensures robust security through end-to-end encryption. When a file is uploaded, it is divided into smaller chunks, and each chunk undergoes encryption using AES-GCM. These encrypted chunks are then transmitted to the other users in the room. When the file is downloaded by the intended recipient, all the encrypted chunks are decrypted, ensuring complete security throughout the transmission process.</p>
+
           <p style="font-size: 1.2rem; margin:0; margin-top:30px; margin-bottom:20px; text-align:left; font-weight: 600;">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#0d6efd" class="bi bi-plus-lg" viewBox="0 0 16 16" style="margin-bottom: 5px;">
               <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-            </svg>  
+            </svg>
             Create a room
           </p>
           <p style="text-align: justify; text-justify: inter-word;">A room is a collection of users among which you want to send/receive files. Rooms can be thought of as group chats in messaging apps. Each user in a room must have a unique name for them to correctly join the room. After the room is created, wait for other users to join.</p>
@@ -58,19 +59,25 @@
             </svg>
             Send a file
           </p>
-          <p style="text-align: justify; text-justify: inter-word;">Sending files never has been so easy. Just click on the 'Send File' button at the bottom right and choose the files that you want to send. Once the files are selected, they will be automatically shared with all other users in that room.</p>
-          <p style="text-align: justify; text-justify: inter-word;">Please note that if the sender of a file leaves the room, any ongoing file transfers will be automatically cancelled, ensuring that no recipient receives an incomplete file. This is because your files are not stored on any server and are transferred in real-time when you are online.</p>
+          <p style="text-align: justify; text-justify: inter-word;">Click on the 'Send File' button at the bottom right and choose the files that you want to send. Once the files are selected, they will be automatically shared with all other users in that room.</p>
+          <p style="text-align: justify; text-justify: inter-word;">Please note that if the sender of a file leaves the room, any ongoing file transfers will be automatically cancelled. This is because your files are not stored on any server and are transferred in real-time when you are online.</p>
+
+          <p style="font-size: 1.2rem; margin:0; margin-top:30px; margin-bottom:20px; text-align:left; font-weight: 600;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#198754" class="bi bi-layers" viewBox="0 0 16 16" style="margin-bottom: 5px; margin-right: 3px;">
+              <path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L3.188 8 .264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l2.922-1.559a.5.5 0 0 0 0-.882l-7.5-4zm3.515 7.008L14.438 10 8 13.433 1.562 10 4.25 8.567l3.515 1.874a.5.5 0 0 0 .47 0l3.515-1.874zM8 9.433 1.562 6 8 2.567 14.438 6 8 9.433z"/>
+            </svg>
+            Under the hood
+          </p>
+          <p style="text-align: justify; text-justify: inter-word;">FileSync uses <a href="https://github.com/peers/peerjs" target="_blank" style="text-decoration: none;">PeerJS</a> (a WebRTC wrapper) to transfer files between multiple devices. Files shared are peer-to-peer, which means there is direct file transfer between the sender and receiver without any intermediate server. Your files remain private and secure throughout the entire transfer process.</p>
+          <p style="text-align: justify; text-justify: inter-word;">Do note that a <a href="https://github.com/peers/peerjs-server" target="_blank" style="text-decoration: none;">PeerJS server</a> is used to assist in the initial connection setup, ensuring all users can establish peer-to-peer connections effectively. Once the connections are established, the server steps back, allowing the direct transfer of files between the sender and the receiver. At no point during this process does the server have access to the file contents. It solely facilitates the connection between users without compromising the privacy or security of the files being shared.</p>
+
+          <img id="comic-img" src="assets/comic.png" title="File Transfer - https://xkcd.com/949" alt="File Transfer - https://xkcd.com/949" style="width:100%; max-width: 456px">
 
           <p style="text-align:left; text-align: justify; text-justify: inter-word; margin-top:30px; margin-bottom:10px">Released under the MIT License.</p>
           <p style="text-align:left; text-align: justify; text-justify: inter-word; margin:0"><a href="https://github.com/polius/filesync" target="_blank" style="text-decoration:none;">https://github.com/polius/filesync</a></p>
         </div>
 
         <div id="home" class="p-4 box" style="margin-top:30px; display: block">
-          <div id="home-room" style="display: none">
-            <p style="font-weight: 600; margin-bottom:10px">Room ID</p>
-            <p id="home-room-id" style="color: var(--color-url); font-size: 15px; font-family: Consolas,monaco,monospace; word-wrap: break-word"></p>
-          </div>
-
           <p style="text-align: left; margin-bottom:8px; font-weight:500">Nickname</p>
           <input id="nickname" class="form-control" autocomplete="off" onkeypress="if (event.key === 'Enter' || event.key === 'NumpadEnter') { homeButtonClick() }">
           <p style="text-align: left; margin-top:15px; margin-bottom:8px; font-weight:500">Password (optional)</p>
