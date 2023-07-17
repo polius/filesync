@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="assets/icon.png">
     <link rel="apple-touch-icon" href="assets/icon-apple.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='https://fonts.googleapis.com/css?family=Jost|Aleo' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Acme|Lato' rel='stylesheet'>
     <link rel="stylesheet" href="css/style.css">
     <script>
       if (window.localStorage.getItem('mode') == 'dark') {
@@ -33,9 +33,9 @@
               <path d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091l.016-.015zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z"/>
             </svg>
           </div>
-          <h1 class="display-5 mb-4 fw-semibold lh-sm" style="font-family: Aleo">FileSync</h1>
+          <h1 class="display-5 mb-4 fw-semibold lh-sm" style="font-family: Acme">FileSync</h1>
         </div>
-        <h2 class="fw-normal" style="margin:0; font-size: calc(1.2rem + 0.4vw)">Send files from one device to many in real-time.</h2>
+        <h2 class="fw-normal" style="margin:0; font-size: calc(1.2rem + 0.3vw)">Send files from one device to many in real-time.</h2>
 
         <div id="about" class="p-4 box" style="margin-top:30px; display: none;">
           <p style="font-size: 1.4rem; margin:0">About</p>
@@ -68,7 +68,7 @@
           </p>
           <p style="text-align: justify; text-justify: inter-word;">This app ensures robust security through end-to-end encryption. When a file is uploaded, it is divided into smaller chunks, and each chunk undergoes encryption using AES-GCM. These encrypted chunks are then transmitted to the other users in the room. When the file is downloaded by the intended recipient, all the encrypted chunks are decrypted, ensuring complete security throughout the transmission process.</p>
           <p style="text-align: justify; text-justify: inter-word;">FileSync uses <a href="https://github.com/peers/peerjs" target="_blank" style="text-decoration: none;">PeerJS</a> (a WebRTC wrapper) to transfer files between multiple devices. Files shared are peer-to-peer, which means there is a direct file transfer between the sender and receiver without any intermediate server. Your files remain private and secure throughout the entire transfer process.</p>
-          <p style="text-align: justify; text-justify: inter-word;">Do note that a <a href="https://github.com/peers/peerjs-server" target="_blank" style="text-decoration: none;">PeerJS server</a> is used to assist in the initial connection setup, ensuring all users can establish peer-to-peer connections effectively. Once the connections are established, the server steps back, allowing the direct transfer of files between the sender and the receiver. At no point during this process does the server have access to the file contents. It solely facilitates the connection between users without compromising the privacy or security of the files being shared.</p>
+          <p style="text-align: justify; text-justify: inter-word; margin-bottom: 20px">Do note that a <a href="https://github.com/peers/peerjs-server" target="_blank" style="text-decoration: none;">PeerJS server</a> is used to assist in the initial connection setup, ensuring all users can establish peer-to-peer connections effectively. Once the connections are established, the server steps back, allowing the direct transfer of files between the sender and the receiver. At no point during this process does the server have access to the file contents. It solely facilitates the connection between users without compromising the privacy or security of the files being shared.</p>
 
           <img id="comic-img" src="assets/comic.png" title="File Transfer - https://xkcd.com/949" alt="File Transfer - https://xkcd.com/949" style="width:100%; max-width: 456px">
 
@@ -106,7 +106,7 @@
 
         <div id="transfer" class="p-4 box" style="margin-top:30px; display: none;">
 
-          <div id="transfer-status-wait" style="color: var(--color-p); font-size:17px; margin-bottom:15px; font-weight:600; display: block;">
+          <div id="transfer-status-wait" style="color: var(--color-p); font-size:16px; margin-bottom:15px; font-weight:600; display: block;">
             <div class="spinner-border" style="color: #0d6efd; width: 1rem; height: 1rem; --bs-spinner-border-width: 0.1em; margin-top:3px; margin-right:3px"></div>
             Waiting users to join...
           </div>
