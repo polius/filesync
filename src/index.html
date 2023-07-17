@@ -79,7 +79,7 @@
         <div id="home" class="p-4 box" style="margin-top:30px; display: block">
           <p style="text-align: left; margin-bottom:8px; font-weight:500">Nickname</p>
           <input id="nickname" class="form-control" autocomplete="off" onkeypress="if (event.key === 'Enter' || event.key === 'NumpadEnter') { homeButtonClick() }">
-          <p style="text-align: left; margin-top:15px; margin-bottom:8px; font-weight:500">Password (optional)</p>
+          <p style="text-align: left; margin-top:20px; margin-bottom:8px; font-weight:500">Password (optional)</p>
           <div class="input-group">
             <input class="form-control" id="password" type="password" autocomplete="off" onkeypress="if (event.key === 'Enter' || event.key === 'NumpadEnter') { homeButtonClick() }" style="border-top-right-radius:0!important; border-bottom-right-radius:0!important">
             <button onclick="togglePasswordVisibility()" class="btn" type="button" style="background-color: #212529; color:#fff; border-color: rgb(86, 92, 110); margin-left:-1px; border-top-left-radius: 0; border-bottom-left-radius: 0">
@@ -93,12 +93,12 @@
               </svg>
             </button>
           </div>
-          <button id="home-button" type="button" onclick="homeButtonClick()" class="btn btn-primary btn-loading" style="padding:10px 30px 10px 30px; margin-top:25px; font-size: 18px; letter-spacing: 0.1px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house-lock" viewBox="0 0 16 16" style="margin-bottom:5px; margin-right:5px">
+          <button id="home-button" type="button" onclick="homeButtonClick()" class="btn btn-primary btn-loading" style="padding:10px 30px 10px 30px; margin-top:25px">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-house-lock" viewBox="0 0 16 16" style="margin-bottom:5px; margin-right:8px">
               <path d="M7.293 1.5a1 1 0 0 1 1.414 0L11 3.793V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v3.293l2.354 2.353a.5.5 0 0 1-.708.708L8 2.207l-5 5V13.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 2 13.5V8.207l-.646.647a.5.5 0 1 1-.708-.708L7.293 1.5Z"/>
               <path d="M10 13a1 1 0 0 1 1-1v-1a2 2 0 0 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-2Zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1Z"/>
             </svg>
-            <span id="home-button-text">Create room</span>
+            <span id="home-button-text" style="font-size: 16px; letter-spacing: 0.1px">Create room</span>
             <span id="home-button-loading" class="spinner-border spinner-border-sm" style="--bs-spinner-border-width: 0.1em; margin-left:5px; margin-top:2px; display: none;"></span>
           </button>
           <p id="error" style="color:#dc3545; margin-top:20px; margin-bottom:0px; display: none;"></p>
