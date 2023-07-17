@@ -2,13 +2,9 @@
 
 [https://filesync.app](https://filesync.app)
 
-FileSync.app is a file sharing web app that allows users to transfer files between multiple devices.
-
-This solution simplifies file sharing by leveraging WebRTC, an open framework for the web that enables Real-Time Communications capabilities in the browser.
+FileSync.app is a file sharing web application that allows users to transfer files between multiple devices with end-to-end encryption.
 
 No account creation or signups are required. It enables both one-to-one and many-to-many file transfers, works across various networks and devices, and requires no app installation.
-
-This app ensures robust security through end-to-end encryption. When a file is uploaded, it is divided into smaller chunks, and each chunk undergoes encryption using AES-GCM. These encrypted chunks are then transmitted to the other users in the room. When the file is downloaded by the intended recipient, all the encrypted chunks are decrypted, ensuring complete security throughout the transmission process.
 
 ### ➕ Create a room
 
@@ -22,7 +18,9 @@ Please note that if the sender of a file leaves the room, any ongoing file trans
 
 ### 💻 Under the hood
 
-FileSync uses [PeerJS](https://github.com/peers/peerjs) (a WebRTC wrapper) to transfer files between multiple devices. Files shared are peer-to-peer, which means there is direct file transfer between the sender and receiver without any intermediate server. Your files remain private and secure throughout the entire transfer process.
+This app ensures robust security through end-to-end encryption. When a file is uploaded, it is divided into smaller chunks, and each chunk undergoes encryption using AES-GCM. These encrypted chunks are then transmitted to the other users in the room. When the file is downloaded by the intended recipient, all the encrypted chunks are decrypted, ensuring complete security throughout the transmission process.
+
+FileSync uses [PeerJS](https://github.com/peers/peerjs) (a WebRTC wrapper) to transfer files between multiple devices. Files shared are peer-to-peer, which means there is a direct file transfer between the sender and receiver without any intermediate server. Your files remain private and secure throughout the entire transfer process.
 
 Do note that a [PeerJS server](https://github.com/peers/peerjs-server) is used to assist in the initial connection setup, ensuring all users can establish peer-to-peer connections effectively. Once the connections are established, the server steps back, allowing the direct transfer of files between the sender and the receiver. At no point during this process does the server have access to the file contents. It solely facilitates the connection between users without compromising the privacy or security of the files being shared.
 
