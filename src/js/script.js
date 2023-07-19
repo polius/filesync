@@ -46,8 +46,7 @@ const transfer_select_file = document.getElementById('transfer-select-file')
 var user;
 
 // Get theme mode
-const mode = window.localStorage.getItem('mode')
-if (mode == 'dark') {
+if (window.localStorage.getItem('mode') == 'dark') {
   theme_text.innerHTML = 'Dark'
   comic_img.src = "assets/comic-dark.png"
 }
@@ -118,6 +117,19 @@ function copyURL() {
   setTimeout(() => {
     transfer_copy.innerHTML = 'Copy URL'
   }, 1000)
+}
+
+// Show modal with the QR code
+function showQR() {
+  document.getElementById('qrcode').innerHTML = ''
+  new QRCode("qrcode", {
+    text: transfer_url.href,
+    width: Math.min(window.innerWidth * 0.8, 250),
+    height: Math.min(window.innerWidth * 0.8, 250),
+    colorDark : "#000",
+    colorLight : window.localStorage.getItem('mode') == 'dark' ? "#adb5db" : '#fff',
+    correctLevel : QRCode.CorrectLevel.H
+  });
 }
 
 // Share room url with Whatsapp
