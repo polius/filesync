@@ -45,6 +45,14 @@ const transfer_select_file = document.getElementById('transfer-select-file')
 // Store current user
 var user;
 
+// QR Code
+var qr = new QRious({
+  element: document.getElementById('qrcode'),
+  background: 'white',
+  foreground: 'black',
+  level: 'H',
+})
+
 // Get theme mode
 if (window.localStorage.getItem('mode') == 'dark') {
   theme_text.innerHTML = 'Dark'
@@ -121,14 +129,9 @@ function copyURL() {
 
 // Show modal with the QR code
 function showQR() {
-  document.getElementById('qrcode').innerHTML = ''
-  new QRCode("qrcode", {
-    text: transfer_url.href,
-    width: Math.min(window.innerWidth * 0.8, 250),
-    height: Math.min(window.innerWidth * 0.8, 250),
-    colorDark : "#000",
-    colorLight : window.localStorage.getItem('mode') == 'dark' ? "#adb5db" : '#fff',
-    correctLevel : QRCode.CorrectLevel.H
+  qr.set({
+    value: transfer_url.href,
+    size: Math.min(window.innerWidth * 0.8, 250),
   });
 }
 
