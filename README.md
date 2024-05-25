@@ -9,7 +9,7 @@
 <br>
 <br>
 
-[![FileSync](https://img.shields.io/badge/Website-736e9b?style=for-the-badge)](https://www.filesync.app)
+[![FileSync](https://img.shields.io/badge/Website-736e9b?style=for-the-badge)](https://filesync.app)
 
 [![License: MIT](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](LICENSE)
 
