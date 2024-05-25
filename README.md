@@ -1,29 +1,34 @@
+<div align="center">
+
 # FileSync
 
-[https://filesync.app](https://filesync.app)
+*"Send files from one device to many in real-time"*
+
+<img width="100" src="src/assets/icon.png">
+
+<br>
+<br>
+
+[![FileSync](https://img.shields.io/badge/Website-736e9b?style=for-the-badge)](https://www.filesync.app)
+
+[![License: MIT](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](LICENSE)
+
+<br>
 
 FileSync.app is a file sharing web application that allows users to transfer files between multiple devices with end-to-end encryption.
 
 No account creation or signups are required. It enables both one-to-one and many-to-many file transfers, works across various networks and devices, and requires no app installation.
 
-### ➕ Create a room
+<br>
 
-A room is a collection of users among which you want to send/receive files. Rooms can be thought of as group chats in messaging apps. Each user in a room must have a unique name for them to correctly join the room. After the room is created, wait for other users to join.
+![FileSync](src/assets/filesync.png)
 
-### ⚡ Send a file
+</div>
 
-Click on the 'Send File' button at the bottom right and choose the files that you want to send. Once the files are selected, they will be automatically shared with all other users in that room.
-
-Please note that if the sender of a file leaves the room, any ongoing file transfers will be automatically cancelled. This is because your files are not stored on any server and are transferred in real-time when you are online.
-
-### 💻 Under the hood
-
-This app ensures robust security through end-to-end encryption. When a file is uploaded, it is divided into smaller chunks, and each chunk undergoes encryption using AES-GCM. These encrypted chunks are then transmitted to the other users in the room. When the file is downloaded by the intended recipient, all the encrypted chunks are decrypted, ensuring complete security throughout the transmission process.
+## Under the hood
 
 FileSync uses [PeerJS](https://github.com/peers/peerjs) (a WebRTC wrapper) to transfer files between multiple devices. Files shared are peer-to-peer, which means there is a direct file transfer between the sender and receiver without any intermediate server. Your files remain private and secure throughout the entire transfer process.
 
 Do note that a [PeerJS server](https://github.com/peers/peerjs-server) is used to assist in the initial connection setup, ensuring all users can establish peer-to-peer connections effectively. Once the connections are established, the server steps back, allowing the direct transfer of files between the sender and the receiver. At no point during this process does the server have access to the file contents. It solely facilitates the connection between users without compromising the privacy or security of the files being shared.
 
 ![File Transfer - https://xkcd.com/949](src/assets/comic.png)
-
-Released under the MIT License.
