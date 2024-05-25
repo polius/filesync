@@ -2,7 +2,7 @@
 
 # FileSync
 
-*"Send files from one device to many in real-time"*
+*Send files from one device to many in real-time*
 
 <img width="100" src="src/assets/icon.png">
 
@@ -11,19 +11,21 @@
 
 [![FileSync](https://img.shields.io/badge/Website-736e9b?style=for-the-badge)](https://filesync.app)
 
-[![License: MIT](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 <br>
 
 FileSync.app is a file sharing web application that allows users to transfer files between multiple devices with end-to-end encryption.
-
-No account creation or signups are required. It enables both one-to-one and many-to-many file transfers, works across various networks and devices, and requires no app installation.
 
 <br>
 
 ![FileSync](src/assets/filesync.png)
 
 </div>
+
+## Easy to use
+
+No account creation or signups are required. It enables both one-to-one and many-to-many file transfers, works across various networks and devices, and requires no app installation.
 
 ## Under the hood
 
