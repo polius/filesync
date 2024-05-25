@@ -101,8 +101,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 .icon {
   padding: 1rem;
-  color: var(--color-icon);
-  background-color: rgba(32,202,151, 0.4);
+  color: rgba(255, 255, 255, 1);
+  background-color: rgb(252, 145, 45);
   border-radius: 1rem;
 }
 .box {
@@ -114,8 +114,12 @@ textarea::-webkit-scrollbar-thumb {
   background-color: var(--color-box-bg);
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.05);
 }
-.head {
-  width: 200px;
+.col-1-3 {
+  display: none;
+}
+.col-2-3 {
+  flex: 0 0 auto;
+  width: auto;
 }
 @media (min-width: 1024px) {
   .master-div {
@@ -130,8 +134,13 @@ textarea::-webkit-scrollbar-thumb {
     margin-right:auto;
   }
   .head {
-    margin-left: auto;
-    margin-right: auto;
-    width: 300px;
+    justify-content: center;
+  }
+  .col-1-3 {
+    display: block;
+  }
+  .col-2-3 {
+    flex: 1 0 0%;
+    width: 100%
   }
 }
