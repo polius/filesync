@@ -298,9 +298,14 @@ function parseBytes(bytes) {
 
 // Function to generate a random string in the format XXX-XXXX-XXX.
 function generateRoomID() {
-  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  const generateRandomString = (length) => Array.from({length}, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
-  return [3, 4, 3].map(length => generateRandomString(length)).join('-');
+  const length = 10
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  const random = crypto.getRandomValues(new Uint8Array(length));
+  let room_id = "";
+  for (let i = 0; i < length; i++) {
+    room_id += alphabet[alphabet.length & random[i]];
+  }
+  return `${room_id.slice(0, 3)}-${room_id.slice(3, 7)}-${room_id.slice(7, 10)}`;
 }
 
 // On document loaded, execute onLoad() method.
