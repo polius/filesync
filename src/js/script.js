@@ -303,7 +303,7 @@ function generateRoomID() {
   const random = crypto.getRandomValues(new Uint8Array(length));
   let room_id = "";
   for (let i = 0; i < length; i++) {
-    room_id += alphabet[alphabet.length & random[i]];
+    room_id += alphabet[random[i] % alphabet.length];
   }
   return `${room_id.slice(0, 3)}-${room_id.slice(3, 7)}-${room_id.slice(7, 10)}`;
 }
