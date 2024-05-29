@@ -297,7 +297,7 @@ class User {
       "file": null,
       "current": 0,
       "sizes": files.map(x => x.size),
-      "interval": setInterval(() => this._downloadAllProgress(), 1000),
+      "interval": setInterval(() => this._downloadAllProgress(), 500),
     };
 
     for (let file of files) {
@@ -313,6 +313,9 @@ class User {
 
       // Init Peering connection to receive the file
       await file.init()
+
+      // Mark the file to be in progress
+      file.in_progress = true
 
       // State to convert the file in zip, instead of downloading it
       file.zip = true
@@ -349,7 +352,7 @@ class User {
     }
 
     // Disable zip mode
-    for (let file of files) file.zip = false
+    for (let file of Object.values(this._files)) file.zip = false
   }
 
   _waitFileTranster(file) {
@@ -359,7 +362,7 @@ class User {
           clearInterval(checkInterval);
           resolve();
         }
-      }, 100);
+      }, 500);
     });
   }
 
@@ -367,6 +370,8 @@ class User {
     // Abort the downloadAll operation
     this._downloadAll.active = false
     this._downloadAll.aborted = true
+
+    // Update UI
     download_modal_cancel.setAttribute("disabled", "")
     download_modal_cancel_spinner.style.display = 'inline-block'
   }
@@ -374,7 +379,6 @@ class User {
   _downloadAllProgress() {
     // Abort file transfer
     if (!this._downloadAll.active) {
-      this._downloadAll.file.abort()
       clearInterval(this._downloadAll.interval)
     }
 
@@ -387,7 +391,7 @@ class User {
     download_modal_value.innerHTML = `${Math.floor(overallProgress)}%`
     download_modal_active.querySelector('.progress-bar').style.width = `${Math.floor(overallProgress)}%`
 
-    if (this._downloadAll.active && overallProgress == 100) {
+    if (overallProgress == 100) {
       clearInterval(this._downloadAll.interval)
       download_modal_active.style.display = 'none'
       download_modal_success.style.display = 'flex'
@@ -689,7 +693,8 @@ class User {
     }
     // Redirect
     else {
-      this._remotePeers[data.peer_id].conn.send({"webrtc-file-download": data})
+      const owner_id = this._files[data.file_id].owner_id
+      this._remotePeers[owner_id].conn.send({"webrtc-file-download": data})
     }
   }
 

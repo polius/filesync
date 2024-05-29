@@ -75,6 +75,10 @@ class File {
     return this._in_progress
   }
 
+  set in_progress(value) {
+    this._in_progress = value
+  }
+
   get aborted() {
     return this._aborted
   }
@@ -153,7 +157,7 @@ class File {
     document.getElementById(`file-${this._id}-progress`).innerHTML = '0% | '
 
     // Store peer data
-    this._remotePeers[data.peer_id] = {"user_id": data.requester_id, "user_name": data.requester_name, "peer": null, "conn": null, "online": true, "interval": setInterval(() => this._isAlive(conn.peer), 1000), "progress": 0, "aborted": false}
+    this._remotePeers[data.peer_id] = {"user_id": data.requester_id, "user_name": data.requester_name, "peer": null, "conn": null, "online": true, "interval": null, "progress": 0, "aborted": false}
 
     // Connect to peer_id
     await this.connect(data.peer_id)
@@ -161,8 +165,11 @@ class File {
     // Get connection
     const conn = this._remotePeers[data.peer_id].conn
 
+    // Init interval to check connection status
+    this._remotePeers[data.peer_id].interval = setInterval(() => this._isAlive(conn.peer), 500)
+
     // Define vars for chunk processing
-    const chunkSize = 1024**2 // 1 MB
+    const chunkSize = 65536 // 64 KB
     let offset = 0
 
     // Recursive function to process each chunk
@@ -225,7 +232,6 @@ class File {
       this._chunks = []
       this._transferred = 0
       this._aborted = false
-      this._in_progress = true
     }
   }
 
@@ -305,7 +311,6 @@ class File {
 
       // Update internal parameters
       this._in_progress = false
-      this._zip = false
 
       // Close connection
       conn.close()
@@ -329,16 +334,15 @@ class File {
     // Update UI: Show the overall progress
     document.getElementById(`file-${this._id}-progress`).innerHTML = `${overall_progress}% | `
 
-    if (!this._aborted && onlinePeers.filter(x => !x.aborted).length == 0) {
-      document.getElementById(`file-${this._id}-progress`).innerHTML = `${overall_progress}% | `
-      document.getElementById(`file-${this._id}-icon-loading`).style.display = 'none'
-      document.getElementById(`file-${this._id}-error`).style.display = 'block'
-      document.getElementById(`file-${this._id}-error`).innerHTML = 'All users stopped the file transfer.'
-    }
-    else if (overall_progress == 100) {
+    if (overall_progress == 100) {
       document.getElementById(`file-${this._id}-abort`).style.display = 'none'
       document.getElementById(`file-${this._id}-icon-loading`).style.display = 'none'
       document.getElementById(`file-${this._id}-icon-success`).style.display = 'block'
+    }
+    else if (!this._aborted && onlinePeers.filter(x => !x.aborted).length == 0) {
+      document.getElementById(`file-${this._id}-icon-loading`).style.display = 'none'
+      document.getElementById(`file-${this._id}-error`).style.display = 'block'
+      document.getElementById(`file-${this._id}-error`).innerHTML = 'All users stopped the file transfer.'
     }
   }
 

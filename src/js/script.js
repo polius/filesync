@@ -311,6 +311,11 @@ function generateRoomID() {
 // On document loaded, execute onLoad() method.
 (() => onLoad())();
 
+// Display a confirmation dialog when the user attempts to refresh or navigate away from the page.
+window.addEventListener("beforeunload", (event) => {
+  event.preventDefault();
+});
+
 // Focus the password input after the fade animation
 password_modal.addEventListener('shown.bs.modal', () => {
   password_modal_value.focus()
