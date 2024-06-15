@@ -169,8 +169,9 @@ class File {
     this._remotePeers[data.peer_id].interval = setInterval(() => this._isAlive(conn.peer), 500)
 
     // Define vars for chunk processing
-    const chunkSize = 65536 // 64 KB
+    const chunkSize = 128 * 1024 // 128 KB
     let offset = 0
+    let position = 0
 
     // Recursive function to process each chunk
     const processChunk = async () => {
@@ -181,12 +182,13 @@ class File {
       // Check if the connection to the remote peer is open
       if (conn.peerConnection != null && conn.peerConnection.iceConnectionState != 'disconnected') {
         // const encryptedChunk = await this._encrypt(chunk, `PASSWORD_VALUE`)
-        conn.send({"webrtc-file-transfer": {"file": chunk, "transferred": chunk.size, "last": isLastChunk}})
+        conn.send({"webrtc-file-transfer": {"file": chunk, "transferred": chunk.size, "last": isLastChunk, "position": position}})
       }
 
       // If it's not the last chunk, process the next one
       if (data.peer_id in this._remotePeers && !isLastChunk) {
         offset += chunkSize
+        position += 1
         await processChunk()
       }
     }
@@ -272,7 +274,7 @@ class File {
 
     // Store file chunk
     // const decryptedChunk = await this._decrypt(data.file, `PASSWORD_VALUE`)
-    this._chunks.push(data.file)
+    this._chunks[data.position] = data.file
     this._transferred += data.transferred
 
     // Compute progress
