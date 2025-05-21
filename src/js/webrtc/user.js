@@ -36,9 +36,19 @@ class User {
     await new Promise((resolve) => {
       // Create a new Peer instance
       this._peer = new Peer(peer_id, {
-        host: "peer.filesync.app",
+        host: 'peer.filesync.app',
         port: 443,
-        path: "/",
+        secure: true,
+        path: '/',
+        config: {
+          iceServers: [
+            {
+              urls: 'turn:turn.filesync.app:3478',
+              username: 'peerjs',
+              credential: '6VF8LbHjZUPR4BdCAPPTQA=='
+            }
+          ]
+        }
       });
 
       // Emitted when a connection to the PeerServer is established.
