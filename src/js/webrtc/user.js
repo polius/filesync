@@ -33,6 +33,20 @@ class User {
   }
 
   async init(peer_id = crypto.randomUUID()) {
+    // Get Short Lived TURN credentials
+    const turn = new Turn();
+    let username, credential;
+    try {
+      ({ username, credential } = await turn.getToken());
+    } catch (err) {
+      console.log(err)
+      transfer_div.style.display = 'none'
+      connect_div.style.display = 'none'
+      error_div.style.display = 'block'
+      error_message.innerHTML = 'An error occurred getting the TURN credentials. Please try again later.'
+      return
+    }
+
     await new Promise((resolve) => {
       // Create a new Peer instance
       this._peer = new Peer(peer_id, {
@@ -44,8 +58,8 @@ class User {
           iceServers: [
             {
               urls: 'turn:turn.filesync.app:3478',
-              username: 'peerjs',
-              credential: '6VF8LbHjZUPR4BdCAPPTQA=='
+              username: username,
+              credential: credential
             }
           ]
         }
