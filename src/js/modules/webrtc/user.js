@@ -1,12 +1,22 @@
-class User {
+import { dom } from '../dom.js';
+import { turn } from './turn.js';
+import { File } from './file.js';
+
+export class User {
   _name = this._generate_name();
   _password = '';
   _peer = null;
   _remotePeers = {};
-  _isHost = room_id.length == 0;
+  _room_id;
+  _isHost;
   _files = {};
   _status;
   _downloadAll;
+
+  constructor(room_id) {
+    this._room_id = room_id;
+    this._isHost = room_id.length == 0;
+  }
 
   get id() {
     return this._peer.id
@@ -33,17 +43,16 @@ class User {
   }
 
   async init(peer_id = crypto.randomUUID()) {
-    // Get Short Lived TURN credentials
-    const turn = new Turn();
+    // Get short-lived TURN credentials
     let username, credential;
     try {
       ({ username, credential } = await turn.getToken());
     } catch (err) {
       console.log(err)
-      transfer_div.style.display = 'none'
-      connect_div.style.display = 'none'
-      error_div.style.display = 'block'
-      error_message.innerHTML = 'An error occurred getting the TURN credentials. Please try again later.'
+      dom.transfer_div.style.display = 'none'
+      dom.connect_div.style.display = 'none'
+      dom.error_div.style.display = 'block'
+      dom.error_message.innerHTML = 'An error occurred getting the TURN credentials. Please try again later.'
       return
     }
 
@@ -103,7 +112,7 @@ class User {
     // Check if there is another user with the same name
     const duplicated = Object.entries(this._remotePeers).some(([k, v]) => v.name == value && k != this._peer.id)
     if (duplicated) {
-      name_modal_error.style.display = 'block'
+      dom.name_modal_error.style.display = 'block'
       return
     }
 
@@ -114,7 +123,7 @@ class User {
     for (let f of Object.values(this._files)) {
       if (f.owner_id == this._peer.id) {
         f.owner_name = this._name
-        document.getElementById(`file-${f.id}-info`).innerHTML = `${parseBytes(f.size)} | Sent by ${f.owner_id == this._peer.id ? `${f.owner_name} (You)` : f.owner_name }`
+        document.getElementById(`file-${f.id}-info`).innerHTML = `${this._parseBytes(f.size)} | Sent by ${f.owner_id == this._peer.id ? `${f.owner_name} (You)` : f.owner_name }`
       }
     }
 
@@ -133,11 +142,11 @@ class User {
       document.getElementById(`user-${this._peer.id}-name`).innerHTML = `${this._name} (You)`
 
       // Notify Host
-      this._remotePeers[room_id].conn.send({'webrtc-user-name': {"id": this._peer.id, "name": this._name}})
+      this._remotePeers[this._room_id].conn.send({'webrtc-user-name': {"id": this._peer.id, "name": this._name}})
     }
 
     // Close modal
-    const modal = bootstrap.Modal.getInstance(name_modal);
+    const modal = bootstrap.Modal.getInstance(dom.name_modal);
     modal.hide()
   }
 
@@ -207,7 +216,7 @@ class User {
     await this._files[fileId].init()
 
     // If it's the host redirect the request to the Origin's Peer. Otherwise send the request to the Host.
-    this._remotePeers[this._isHost ? this._files[fileId].owner_id : room_id].conn.send({'webrtc-file-download': {"file_id": fileId, "requester_id": this._peer.id, "requester_name": this._name, "peer_id": this._files[fileId].peer.id}})
+    this._remotePeers[this._isHost ? this._files[fileId].owner_id : this._room_id].conn.send({'webrtc-file-download': {"file_id": fileId, "requester_id": this._peer.id, "requester_name": this._name, "peer_id": this._files[fileId].peer.id}})
   }
 
   // Abort a file that is already being downloaded
@@ -230,7 +239,7 @@ class User {
     this.getFileDetails(fileId);
 
     // Show modal
-    const modal = new bootstrap.Modal(file_modal)
+    const modal = new bootstrap.Modal(dom.file_modal)
     modal.show()
   }
 
@@ -242,18 +251,18 @@ class User {
     }, {});
 
     // Set Refresh button handler
-    file_modal_refresh.onclick = () => {
+    dom.file_modal_refresh.onclick = () => {
       this.getFileDetails(fileId)
     };
 
     // Update UI
-    file_modal_table_empty.style.display = Object.values(details).length == 0 ? 'block' : 'none'
-    file_modal_table.style.display = Object.values(details).length == 0 ? 'none' : 'table'
+    dom.file_modal_table_empty.style.display = Object.values(details).length == 0 ? 'block' : 'none'
+    dom.file_modal_table.style.display = Object.values(details).length == 0 ? 'none' : 'table'
 
     // Build table
-    file_modal_table.querySelector('tbody').innerHTML = ''
+    dom.file_modal_table.querySelector('tbody').innerHTML = ''
     for (let user of Object.values(details)) {
-      file_modal_table.querySelector('tbody').innerHTML += `
+      dom.file_modal_table.querySelector('tbody').innerHTML += `
         <tr>
           <th scope="row">${user.user_name}</th>
           <td>${user.progress}%</td>
@@ -270,23 +279,23 @@ class User {
 
   async downloadAll() {
     // Init UI Components
-    download_modal_value.innerHTML = '0%'
-    download_modal_active.querySelector('.progress-bar').style.width = '0%'
-    download_modal_active.style.display = 'flex'
-    download_modal_success.style.display = 'none'
-    download_modal_error.style.display = 'none'
-    download_modal_close.style.display = 'none'
-    download_modal_cancel.style.display = 'block'
-    download_modal_cancel.removeAttribute("disabled")
-    download_modal_cancel_spinner.style.display = 'none'
+    dom.download_modal_value.innerHTML = '0%'
+    dom.download_modal_active.querySelector('.progress-bar').style.width = '0%'
+    dom.download_modal_active.style.display = 'flex'
+    dom.download_modal_success.style.display = 'none'
+    dom.download_modal_error.style.display = 'none'
+    dom.download_modal_close.style.display = 'none'
+    dom.download_modal_cancel.style.display = 'block'
+    dom.download_modal_cancel.removeAttribute("disabled")
+    dom.download_modal_cancel_spinner.style.display = 'none'
 
     // Get available files to download
     const files = Object.values(this._files).filter(x => x.owner_id != this._peer.id && !x.removed)
 
     // Check if at least there is a file to be downloaded
     if (files.length == 0) {
-      const modal = new bootstrap.Modal(notification_modal)
-      notification_modal_value.innerHTML = "There are no files to be downloaded."
+      const modal = new bootstrap.Modal(dom.notification_modal)
+      dom.notification_modal_value.innerHTML = "There are no files to be downloaded."
       modal.show()
       setTimeout(() => modal.hide(), 2000)
       return
@@ -297,15 +306,15 @@ class User {
 
     // Show notification modal
     if (inProgress) {
-      const modal = new bootstrap.Modal(notification_modal)
-      notification_modal_value.innerHTML = "Files are still downloading."
+      const modal = new bootstrap.Modal(dom.notification_modal)
+      dom.notification_modal_value.innerHTML = "Files are still downloading."
       modal.show()
       setTimeout(() => modal.hide(), 2000)
       return
     }
 
     // Show download all modal
-    const modal = new bootstrap.Modal(download_modal, {
+    const modal = new bootstrap.Modal(dom.download_modal, {
       backdrop: 'static',
       keyboard: false
     })
@@ -345,7 +354,7 @@ class User {
       file.zip = true
 
       // Initiate the request to the file's owner to download the file
-      this._remotePeers[this._isHost ? file.owner_id : room_id].conn.send({'webrtc-file-download': {"file_id": file.id, "requester_id": this._peer.id, "requester_name": this._name, "peer_id": file.peer.id}})
+      this._remotePeers[this._isHost ? file.owner_id : this._room_id].conn.send({'webrtc-file-download': {"file_id": file.id, "requester_id": this._peer.id, "requester_name": this._name, "peer_id": file.peer.id}})
 
       // Wait until file finishes downloading
       await this._waitFileTranster(file)
@@ -396,8 +405,8 @@ class User {
     this._downloadAll.aborted = true
 
     // Update UI
-    download_modal_cancel.setAttribute("disabled", "")
-    download_modal_cancel_spinner.style.display = 'inline-block'
+    dom.download_modal_cancel.setAttribute("disabled", "")
+    dom.download_modal_cancel_spinner.style.display = 'inline-block'
   }
 
   _downloadAllProgress() {
@@ -412,25 +421,25 @@ class User {
     const overallProgress = (totalTransferred / totalSize) * 100;
 
     // Update UI
-    download_modal_value.innerHTML = `${Math.floor(overallProgress)}%`
-    download_modal_active.querySelector('.progress-bar').style.width = `${Math.floor(overallProgress)}%`
+    dom.download_modal_value.innerHTML = `${Math.floor(overallProgress)}%`
+    dom.download_modal_active.querySelector('.progress-bar').style.width = `${Math.floor(overallProgress)}%`
 
     if (overallProgress == 100) {
       clearInterval(this._downloadAll.interval)
-      download_modal_active.style.display = 'none'
-      download_modal_success.style.display = 'flex'
-      download_modal_cancel.style.display = 'none'
-      download_modal_close.style.display = 'block'
+      dom.download_modal_active.style.display = 'none'
+      dom.download_modal_success.style.display = 'flex'
+      dom.download_modal_cancel.style.display = 'none'
+      dom.download_modal_close.style.display = 'block'
     }
     else if (!this._downloadAll.active && !this._downloadAll.aborted) {
-      download_modal_active.style.display = 'none'
-      download_modal_error.style.display = 'block'
-      download_modal_error.querySelector('.progress-bar').style.width = `${Math.floor(overallProgress)}%`
-      download_modal_cancel.style.display = 'none'
-      download_modal_close.style.display = 'block'
+      dom.download_modal_active.style.display = 'none'
+      dom.download_modal_error.style.display = 'block'
+      dom.download_modal_error.querySelector('.progress-bar').style.width = `${Math.floor(overallProgress)}%`
+      dom.download_modal_cancel.style.display = 'none'
+      dom.download_modal_close.style.display = 'block'
     }
     else if (this._downloadAll.aborted) {
-      const modal = bootstrap.Modal.getInstance(download_modal);
+      const modal = bootstrap.Modal.getInstance(dom.download_modal);
       setTimeout(() => modal.hide(), 1000)
     }
   }
@@ -481,8 +490,8 @@ class User {
         this._remotePeers[conn.peer] = {"name": data['webrtc-connect']['name'], "conn": conn,  "interval": setInterval(() => this._isAlive(conn.peer), 1000)}
 
         // Show peer connected status
-        transfer_status_wait.style.display = 'none'
-        transfer_status_success.style.display = 'inline-block'
+        dom.transfer_status_wait.style.display = 'none'
+        dom.transfer_status_success.style.display = 'inline-block'
 
         // Define peers list (including host user)
         const peers_list = [{"id": this._peer.id, "name": this._name }, ...Object.entries(this._remotePeers).map(([k, v]) => ({"id": k, "name": v.name}))];
@@ -502,25 +511,25 @@ class User {
     else if ('webrtc-connect-response' in data && !this._isHost) {
       this._status = data['webrtc-connect-response']
       if (data['webrtc-connect-response'].status == 'password_required') {
-        connect_div.style.display = 'none'
-        password_div.style.display = 'block'
-        password_input.focus()
+        dom.connect_div.style.display = 'none'
+        dom.password_div.style.display = 'block'
+        dom.password_input.focus()
         conn.close()
       }
       else if (data['webrtc-connect-response'].status == 'password_invalid') {
-        password_error.style.display = 'block'
-        password_input.value = ''
-        password_input.focus()
-        password_submit.removeAttribute("disabled")
-        password_loading.style.display = 'none'
+        dom.password_error.style.display = 'block'
+        dom.password_input.value = ''
+        dom.password_input.focus()
+        dom.password_submit.removeAttribute("disabled")
+        dom.password_loading.style.display = 'none'
         conn.close()
       }
       else if (data['webrtc-connect-response'].status == 'welcome') {
         // Update UI Components
-        connect_div.style.display = 'none'
-        password_div.style.display = 'none'
-        transfer_div.style.display = 'block';
-        transfer_status_protected.style.display = data['webrtc-connect-response'].secured ? 'inline-block' : 'none'
+        dom.connect_div.style.display = 'none'
+        dom.password_div.style.display = 'none'
+        dom.transfer_div.style.display = 'block';
+        dom.transfer_status_protected.style.display = data['webrtc-connect-response'].secured ? 'inline-block' : 'none'
       }
     }
     else if ('webrtc-user-name' in data && this._isHost) {
@@ -531,7 +540,7 @@ class User {
       for (let f of Object.values(this._files)) {
         if (f.owner_id == data['webrtc-user-name'].id) {
           f.owner_name = data['webrtc-user-name'].name
-          document.getElementById(`file-${f.id}-info`).innerHTML = `${parseBytes(f.size)} | Sent by ${f.owner_name}`
+          document.getElementById(`file-${f.id}-info`).innerHTML = `${this._parseBytes(f.size)} | Sent by ${f.owner_name}`
         }
         for (let p of Object.values(f.remotePeers)) {
           if (p.user_id == data['webrtc-user-name'].id) {
@@ -551,16 +560,16 @@ class User {
     }
     else if ('webrtc-peers' in data && !this._isHost) {
       // Show transfer page
-      transfer_div.style.display = 'block'
-      transfer_status_wait.style.display = 'none'
-      transfer_status_success.style.display = 'inline-block'
+      dom.transfer_div.style.display = 'block'
+      dom.transfer_status_wait.style.display = 'none'
+      dom.transfer_status_success.style.display = 'inline-block'
 
       // Process Connected Peers
       for (let p of data['webrtc-peers']) {
         // Peer is the Host
-        if (p.id == room_id) {
+        if (p.id == this._room_id) {
           this._remotePeers[p.id].name = p.name
-          transfer_users_list_host_name.innerHTML = p.name
+          dom.transfer_users_list_host_name.innerHTML = p.name
         }
         // Peer is not the Host
         else {
@@ -580,7 +589,7 @@ class User {
         for (let f of Object.values(this._files)) {
           if (f.owner_id == p.id) {
             f.owner_name = p.name
-            document.getElementById(`file-${f.id}-info`).innerHTML = `${parseBytes(f.size)} | Sent by ${f.owner_id == this._peer.id ? `${p.name} (You)` : p.name }`
+            document.getElementById(`file-${f.id}-info`).innerHTML = `${this._parseBytes(f.size)} | Sent by ${f.owner_id == this._peer.id ? `${p.name} (You)` : p.name }`
           }
         }
       }
@@ -622,11 +631,11 @@ class User {
   // Emitted when either you or the remote peer closes the data connection.
   _handleClose(conn) {
     // Peer: The host has closed the connection
-    if (conn.peer == room_id) {
+    if (conn.peer == this._room_id) {
       if (this._status == 'welcome') {
-        transfer_div.style.display = 'none'
-        error_div.style.display = 'block'
-        error_message.innerHTML = 'Host user has been disconnected.'
+        dom.transfer_div.style.display = 'none'
+        dom.error_div.style.display = 'block'
+        dom.error_message.innerHTML = 'Host user has been disconnected.'
       }
     }
     // Host: A peer has closed the connection
@@ -653,8 +662,8 @@ class User {
 
       // If no peers, disable the Send File button
       if (Object.keys(this._remotePeers).length == 0) {
-        transfer_status_success.style.display = 'none'
-        transfer_status_wait.style.display = 'inline-block'
+        dom.transfer_status_success.style.display = 'none'
+        dom.transfer_status_wait.style.display = 'inline-block'
       }
 
       // Notify all peers
@@ -668,10 +677,10 @@ class User {
   // Emitted when there is an unexpected error in the data connection.
   _handleError(err) {
     console.error('Connection error: ' + err)
-    transfer_div.style.display = 'none'
-    connect_div.style.display = 'none'
-    error_div.style.display = 'block'
-    error_message.innerHTML = err.type === 'browser-incompatible' ? 'FileSync does not work with this browser.' : err.message
+    dom.transfer_div.style.display = 'none'
+    dom.connect_div.style.display = 'none'
+    dom.error_div.style.display = 'block'
+    dom.error_message.innerHTML = err.type === 'browser-incompatible' ? 'FileSync does not work with this browser.' : err.message
   }
 
   async _onFileAdd(files) {
@@ -757,10 +766,10 @@ class User {
       </span>
       <span id="user-${user.id}-name">${user.id == this._peer.id ? `${user.name} (You)` : user.name}</span>
     `
-    transfer_users_list.appendChild(li)
+    dom.transfer_users_list.appendChild(li)
 
     // Update the number of users in the list
-    transfer_users_count.innerHTML = ` (${transfer_users_list.querySelectorAll('li').length})`
+    dom.transfer_users_count.innerHTML = ` (${dom.transfer_users_list.querySelectorAll('li').length})`
   }
 
   _removeUserUI(user_id) {
@@ -768,12 +777,12 @@ class User {
     document.getElementById(`user-${user_id}`).remove()
 
     // Update the number of users in the list
-    transfer_users_count.innerHTML = ` (${transfer_users_list.querySelectorAll('li').length})`
+    dom.transfer_users_count.innerHTML = ` (${dom.transfer_users_list.querySelectorAll('li').length})`
   }
 
   _addFileUI(file) {
     // Add file to the list
-    transfer_files_list_empty.remove()
+    dom.transfer_files_list_empty.remove()
     let li = document.createElement('li')
     li.setAttribute('id', `file-${this._peer.id}`)
     li.setAttribute('class', 'list-group-item')
@@ -803,7 +812,7 @@ class User {
             <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/>
           </svg>
           ${file.name}</div>
-          <div style="color: #636979; font-size: .9rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; margin-bottom:1px"><span id="file-${file.id}-progress"></span><span id="file-${file.id}-info">${parseBytes(file.size)} | Sent by ${file.owner_id == this._peer.id ? `${file.owner_name} (You)` : file.owner_name }</span></div>
+          <div style="color: #636979; font-size: .9rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; margin-bottom:1px"><span id="file-${file.id}-progress"></span><span id="file-${file.id}-info">${this._parseBytes(file.size)} | Sent by ${file.owner_id == this._peer.id ? `${file.owner_name} (You)` : file.owner_name }</span></div>
           <div id="file-${file.id}-error" style="color: #dc3545; font-size: .9rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; margin-top:5px; margin-bottom:4px; display:none"></div>
           <div id="file-${file.id}-info" onclick="showFileDetails('${file.id}')" style="color: #0d6efd; font-size: .9rem; font-weight: 500; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; padding-top:5px; padding-bottom:4px; padding-right:4px; cursor:pointer; width:76px; display: ${file.owner_id == this._peer.id ? 'block' : 'none'}">See details</div>
         </div>
@@ -827,15 +836,27 @@ class User {
         </div>
       </div>
     `
-    transfer_files_list.appendChild(li)
+    dom.transfer_files_list.appendChild(li)
 
     // Update the number of files in the list
-    transfer_files_count.innerHTML = ` (${transfer_files_list.querySelectorAll('li').length})`
+    dom.transfer_files_count.innerHTML = ` (${dom.transfer_files_list.querySelectorAll('li').length})`
   }
 
   _generate_name() {
     const colors = ["Aqua","Aquamarine","Azure","Beige","Bisque","Black","Blue","Brown","Chartreuse","Chocolate","Coral","Cornsilk","Crimson","Cyan","Fuchsia","Gold","Gray","Grey","Green","Indigo","Ivory","Khaki","Lavender","Lime","Linen","Magenta","Maroon","Navy","Olive","Orange","Orchid","Peru","Pink","Plum","Purple","Red","Salmon","Sienna","Silver","Snow","Tan","Teal","Thistle","Tomato","Turquoise","Violet","Wheat","White","Yellow"]
     const animals = ["Aardvark","Albatross","Alligator","Alpaca","Ant","Anteater","Antelope","Ape","Armadillo","Donkey","Baboon","Badger","Barracuda","Bat","Bear","Beaver","Bee","Bison","Boar","Buffalo","Butterfly","Camel","Capybara","Caribou","Cassowary","Cat","Caterpillar","Cattle","Chamois","Cheetah","Chicken","Chimpanzee","Chinchilla","Chough","Clam","Cobra","Cockroach","Cod","Cormorant","Coyote","Crab","Crane","Crocodile","Crow","Curlew","Deer","Dinosaur","Dog","Dogfish","Dolphin","Dotterel","Dove","Dragonfly","Duck","Dugong","Dunlin","Eagle","Echidna","Eel","Eland","Elephant","Elk","Emu","Falcon","Ferret","Finch","Fish","Flamingo","Fly","Fox","Frog","Gaur","Gazelle","Gerbil","Giraffe","Gnat","Gnu","Goat","Goldfinch","Goldfish","Goose","Gorilla","Goshawk","Grasshopper","Grouse","Guanaco","Gull","Hamster","Hare","Hawk","Hedgehog","Heron","Herring","Hippopotamus","Hornet","Horse","Human","Hummingbird","Hyena","Ibex","Ibis","Jackal","Jaguar","Jay","Jellyfish","Kangaroo","Kingfisher","Koala","Kookabura","Kouprey","Kudu","Lapwing","Lark","Lemur","Leopard","Lion","Llama","Lobster","Locust","Loris","Louse","Lyrebird","Magpie","Mallard","Manatee","Mandrill","Mantis","Marten","Meerkat","Mink","Mole","Mongoose","Monkey","Moose","Mosquito","Mouse","Mule","Narwhal","Newt","Nightingale","Octopus","Okapi","Opossum","Oryx","Ostrich","Otter","Owl","Oyster","Panther","Parrot","Partridge","Peafowl","Pelican","Penguin","Pheasant","Pig","Pigeon","Pony","Porcupine","Porpoise","Quail","Quelea","Quetzal","Rabbit","Raccoon","Rail","Ram","Rat","Raven","Red deer","Red panda","Reindeer","Rhinoceros","Rook","Salamander","Salmon","Sand Dollar","Sandpiper","Sardine","Scorpion","Seahorse","Seal","Shark","Sheep","Shrew","Skunk","Snail","Snake","Sparrow","Spider","Spoonbill","Squid","Squirrel","Starling","Stingray","Stinkbug","Stork","Swallow","Swan","Tapir","Tarsier","Termite","Tiger","Toad","Trout","Turkey","Turtle","Viper","Vulture","Wallaby","Walrus","Wasp","Weasel","Whale","Wildcat","Wolf","Wolverine","Wombat","Woodcock","Woodpecker","Worm","Wren","Yak","Zebra"]
     return colors[Math.round(Math.random() * (colors.length - 1))] + ' ' + animals[Math.round(Math.random() * (animals.length - 1))]
+  }
+
+  // Function to parse bytes
+  _parseBytes(bytes) {
+    const units = ['bytes', 'KB', 'MB', 'GB', 'TB']
+    const base = 1024
+    if (bytes === 0) {
+      return '0 bytes'
+    }
+    const exponent = Math.floor(Math.log(bytes) / Math.log(base))
+    const value = (bytes / Math.pow(base, exponent)).toFixed(2)
+    return `${value} ${units[exponent]}`
   }
 }

@@ -1,5 +1,8 @@
 class Turn {
   _url = "https://api.filesync.app/credentials/";
+  _expiration = null;
+  _username = null;
+  _credential = null;
 
   _decodeJwt(token) {
     const payload = token.split(".")[1];
@@ -8,6 +11,14 @@ class Turn {
   }
 
   getToken = async () => {
+    const now = Math.floor(Date.now() / 1000);
+
+    // Check if token is still valid
+    if (this._expiration !== null && this._expiration > now) {
+      return { username: this._username, credential: this._credential };
+    }
+
+    // Fetch new token
     const response = await fetch(this._url, { method: "GET" });
 
     if (!response.ok) {
@@ -23,6 +34,15 @@ class Turn {
 
     // Decode JWT to get username and credential
     const payload = this._decodeJwt(token);
-    return { username: payload.username, credential: payload.credential};
+
+    // Set cached values
+    this._expiration = payload.exp - 10; // Subtract 10 seconds for safety
+    this._username = payload.username;
+    this._credential = payload.credential;
+
+    // Return the username and credential
+    return { username: this._username, credential: this._credential };
   };
 }
+
+export const turn = new Turn();

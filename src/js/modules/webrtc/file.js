@@ -1,4 +1,7 @@
-class File {
+import { dom } from '../dom.js';
+import { turn } from './turn.js';
+
+export class File {
   // File
   _id;
   _name;
@@ -112,12 +115,34 @@ class File {
   }
 
   async init(peer_id) {
+    // Get short-lived TURN credentials
+    let username, credential;
+    try {
+      ({ username, credential } = await turn.getToken());
+    } catch (err) {
+      console.log(err)
+      dom.transfer_div.style.display = 'none'
+      dom.connect_div.style.display = 'none'
+      dom.error_div.style.display = 'block'
+      dom.error_message.innerHTML = 'An error occurred getting the TURN credentials. Please try again later.'
+      return
+    }
+
     await new Promise((resolve) => {
       // Create a new Peer instance
       const peer = new Peer(crypto.randomUUID(), {
         host: "peer.filesync.app",
         port: 443,
-        path: "/"
+        path: "/",
+        config: {
+          iceServers: [
+            {
+              urls: 'turn:turn.filesync.app:3478',
+              username: username,
+              credential: credential
+            }
+          ]
+        }
       });
 
       // Emitted when a connection to the PeerServer is established.
