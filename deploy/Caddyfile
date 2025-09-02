@@ -1,0 +1,7 @@
+localhost:80 {
+	reverse_proxy filesync:80
+}
+
+http://localhost:9000 {
+	reverse_proxy peerjs:9000
+}

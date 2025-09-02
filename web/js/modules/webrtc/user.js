@@ -42,7 +42,10 @@ export class User {
     this._password = value
   }
 
-  async init(peer_id = crypto.randomUUID()) {
+  async init(peer_id = null) {
+    // Get UUID
+    if (peer_id == null) peer_id = await this._getUUID();
+
     // Get short-lived TURN credentials
     let username, credential;
     try {
@@ -59,14 +62,18 @@ export class User {
     await new Promise((resolve) => {
       // Create a new Peer instance
       this._peer = new Peer(peer_id, {
-        host: 'peer.filesync.app',
-        port: 443,
-        secure: true,
-        path: '/',
+        host: window.location.hostname,
+        port: 9000,
+        path: "/",
+        secure: window.location.hostname !== 'localhost',
         config: {
+          // iceTransportPolicy: "relay",  // Force TURN-only
           iceServers: [
+            { 
+              urls: `stun:${window.location.hostname}:3478`
+            },
             {
-              urls: 'turn:turn.filesync.app:3478',
+              urls: `turn:${window.location.hostname}:3478`,
               username: username,
               credential: credential
             }
@@ -151,12 +158,12 @@ export class User {
   }
 
   // Add one or multiple file to be transferred to all peers
-  addFiles(files) {
+  async addFiles(files) {
     let data = []
     for (const file of files) {
       // Parse file
       const fileData = {
-        "id": self.crypto.randomUUID(),
+        "id": await this._getUUID(),
         "name": file.name,
         "size": file.size,
         "content": file,
@@ -858,5 +865,11 @@ export class User {
     const exponent = Math.floor(Math.log(bytes) / Math.log(base))
     const value = (bytes / Math.pow(base, exponent)).toFixed(2)
     return `${value} ${units[exponent]}`
+  }
+
+  async _getUUID() {
+    const response = await fetch(`/api/uuid`);
+    const data = await response.json();
+    return data['uuid'];
   }
 }

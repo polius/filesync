@@ -127,17 +127,25 @@ export class File {
       dom.error_message.innerHTML = 'An error occurred getting the TURN credentials. Please try again later.'
       return
     }
+    
+    await new Promise(async (resolve) => {
+      // Get UUID
+      const uuid = await this._getUUID();
 
-    await new Promise((resolve) => {
       // Create a new Peer instance
-      const peer = new Peer(crypto.randomUUID(), {
-        host: "peer.filesync.app",
-        port: 443,
+      const peer = new Peer(uuid, {
+        host: window.location.hostname,
+        port: 9000,
         path: "/",
+        secure: window.location.hostname !== 'localhost',
         config: {
+          // iceTransportPolicy: "relay",  // Force TURN-only
           iceServers: [
+            { 
+              urls: `stun:${window.location.hostname}:3478`
+            },
             {
-              urls: 'turn:turn.filesync.app:3478',
+              urls: `turn:${window.location.hostname}:3478`,
               username: username,
               credential: credential
             }
@@ -194,7 +202,7 @@ export class File {
     this._remotePeers[data.peer_id].interval = setInterval(() => this._isAlive(conn.peer), 500)
 
     // Define vars for chunk processing
-    const chunkSize = 128 * 1024 // 128 KB
+    const chunkSize = 1024 * 1024 // 1 MB
     let offset = 0
     let position = 0
 
@@ -207,7 +215,7 @@ export class File {
       // Check if the connection to the remote peer is open
       if (conn.peerConnection != null && conn.peerConnection.iceConnectionState != 'disconnected') {
         // const encryptedChunk = await this._encrypt(chunk, `PASSWORD_VALUE`)
-        conn.send({"webrtc-file-transfer": {"file": chunk, "transferred": chunk.size, "last": isLastChunk, "position": position}})
+        conn.send({"webrtc-file-transfer": {"file": chunk, "transferred": chunk.size, "position": position}})
       }
 
       // If it's not the last chunk, process the next one
@@ -314,7 +322,7 @@ export class File {
     conn.send({"webrtc-file-progress": {"progress": this._progress}})
 
     // If it's the last chunk
-    if (data.last) {
+    if (this._transferred == this._size) {
       if (!this._zip) {
         // Update UI
         document.getElementById(`file-${this._id}-download`).style.display = 'block'
@@ -441,5 +449,11 @@ export class File {
 
     // Step 7: Return the decrypted data as Blob
     return decryptedBlob;
+  }
+
+  async _getUUID() {
+    const response = await fetch(`/api/uuid`);
+    const data = await response.json();
+    return data['uuid'];
   }
 }

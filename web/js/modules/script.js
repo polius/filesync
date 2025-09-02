@@ -2,7 +2,7 @@ import { dom } from './dom.js';
 import { User } from './webrtc/user.js';
 
 // Room ID
-const room_id = window.location.pathname.substring(1) // window.location.search ? window.location.search.substring(4) : ''
+const room_id = window.location.pathname.substring(1)
 
 // Store current user
 var user;
@@ -35,7 +35,7 @@ async function onLoad() {
 
     // Init UI Components
     dom.transfer_div.style.display = 'block'
-    dom.transfer_url_value.innerHTML = `${window.location.origin}/${new_room_id}` // `${window.location.origin}${window.location.pathname}?id=${new_room_id}`
+    dom.transfer_url_value.innerHTML = `${window.location.origin}/${new_room_id}`
     dom.transfer_users_list_host_name.innerHTML = user.name + ' (You)'
     dom.transfer_users_count.innerHTML = ' (1)'
     dom.transfer_add_password.style.display = 'block';
@@ -48,7 +48,7 @@ async function onLoad() {
   else {
     // Init UI Componente
     dom.connect_div.style.display = 'block'
-    dom.transfer_url_value.innerHTML = `${window.location.origin}/${room_id}` // `${window.location.origin}${window.location.pathname}?id=${room_id}`
+    dom.transfer_url_value.innerHTML = `${window.location.origin}/${room_id}`
     qr.set({value: dom.transfer_url_value.innerHTML});
 
     // Init peer connection
@@ -163,7 +163,20 @@ window.changeNameSubmit = changeNameSubmit;
 // Copy Room url
 function copyURL() {
   const url = dom.transfer_url_value.innerHTML;
-  navigator.clipboard.writeText(url)
+  if (navigator.clipboard && window.isSecureContext) {
+    // Secure context (HTTPS)
+    navigator.clipboard.writeText(url)
+  }
+  else {
+    // Fallback for HTTP
+    const textarea = document.createElement("textarea");
+    textarea.value = url;
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  }
 
   const modal = new bootstrap.Modal(dom.notification_modal)
   dom.notification_modal_value.innerHTML = "URL copied."

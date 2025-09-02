@@ -1,5 +1,5 @@
 class Turn {
-  _url = "https://api.filesync.app/credentials/";
+  _url = "/api/credentials";
   _expiration = null;
   _username = null;
   _credential = null;

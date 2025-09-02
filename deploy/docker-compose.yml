@@ -1,0 +1,40 @@
+services:
+  caddy:
+    image: caddy
+    container_name: filesync-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9000:9000"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - filesync:/data
+    restart: unless-stopped
+
+  coturn:
+    image: coturn/coturn:alpine
+    container_name: filesync-coturn
+    command:
+      - --fingerprint
+      - --use-auth-secret
+      - --static-auth-secret=<SECRET_KEY>
+      - --no-multicast-peers
+    ports:
+      - "3478:3478/tcp"
+      - "3478:3478/udp"
+    restart: unless-stopped
+
+  peerjs:
+    image: peerjs/peerjs-server
+    container_name: filesync-peerjs
+    restart: unless-stopped
+
+  filesync:
+    image: poliuscorp/filesync
+    container_name: filesync-app
+    environment:
+      - SECRET_KEY=<SECRET_KEY>
+    restart: unless-stopped
+
+volumes:
+  filesync:
