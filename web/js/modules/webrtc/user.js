@@ -46,38 +46,30 @@ export class User {
     // Get UUID
     if (peer_id == null) peer_id = await this._getUUID();
 
-    // Get short-lived TURN credentials
-    let username, credential;
+    // Get ICE servers
+    let iceServers;
     try {
-      ({ username, credential } = await turn.getToken());
+      iceServers = await turn.getServers();
     } catch (err) {
       console.log(err)
       dom.transfer_div.style.display = 'none'
       dom.connect_div.style.display = 'none'
       dom.error_div.style.display = 'block'
-      dom.error_message.innerHTML = 'An error occurred getting the TURN credentials. Please try again later.'
+      dom.error_message.innerHTML = 'An error occurred getting the ICE servers. Please try again later.'
       return
     }
 
     await new Promise((resolve) => {
       // Create a new Peer instance
+      const isSecure = window.isSecureContext && window.location.hostname !== 'localhost';
       this._peer = new Peer(peer_id, {
         host: window.location.hostname,
         port: 9000,
         path: "/",
-        secure: window.location.hostname !== 'localhost',
+        secure: isSecure,
         config: {
-          // iceTransportPolicy: "relay",  // Force TURN-only
-          iceServers: [
-            { 
-              urls: `stun:${window.location.hostname}:3478`
-            },
-            {
-              urls: `turn:${window.location.hostname}:3478`,
-              username: username,
-              credential: credential
-            }
-          ]
+          iceServers: iceServers,
+          // iceTransportPolicy: "relay",  // Force TURN
         }
       });
 

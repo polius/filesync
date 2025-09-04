@@ -1,16 +1,23 @@
 class Turn {
-  _url = "/api/credentials";
-  _expiration = null;
   _username = null;
   _credential = null;
+  _expiration = null;
 
-  _decodeJwt(token) {
-    const payload = token.split(".")[1];
-    const json = atob(payload);
-    return JSON.parse(json);
+  getServers = async () => {
+    await this._getCredentials();
+    return [
+      {
+        urls: `stun:${window.location.hostname}:3478`
+      },
+      {
+        urls: `turn:${window.location.hostname}:3478`,
+        username: this._username,
+        credential: this._credential,
+      }
+    ]
   }
 
-  getToken = async () => {
+  _getCredentials = async () => {
     const now = Math.floor(Date.now() / 1000);
 
     // Check if token is still valid
@@ -19,7 +26,7 @@ class Turn {
     }
 
     // Fetch new token
-    const response = await fetch(this._url, { method: "GET" });
+    const response = await fetch("/api/credentials", { method: "GET" });
 
     if (!response.ok) {
       throw new Error("An issue occurred while getting the token.");
@@ -36,13 +43,16 @@ class Turn {
     const payload = this._decodeJwt(token);
 
     // Set cached values
-    this._expiration = payload.exp - 10; // Subtract 10 seconds for safety
     this._username = payload.username;
     this._credential = payload.credential;
-
-    // Return the username and credential
-    return { username: this._username, credential: this._credential };
+    this._expiration = payload.exp - 10; // Subtract 10 seconds for safety
   };
+
+  _decodeJwt(token) {
+    const payload = token.split(".")[1];
+    const json = atob(payload);
+    return JSON.parse(json);
+  }
 }
 
 export const turn = new Turn();

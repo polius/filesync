@@ -98,7 +98,7 @@ https://yourdomain
 To stop and remove the containers, run:
 
 ```
-docker-compose rm -f
+docker-compose down
 ```
 
 ## Under the hood

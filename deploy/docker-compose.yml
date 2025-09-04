@@ -17,8 +17,9 @@ services:
     command:
       - --fingerprint
       - --use-auth-secret
-      - --static-auth-secret=<SECRET_KEY>
       - --no-multicast-peers
+      - --realm=filesync.app
+      - --static-auth-secret=<SECRET_KEY>
     ports:
       - "3478:3478/tcp"
       - "3478:3478/udp"
